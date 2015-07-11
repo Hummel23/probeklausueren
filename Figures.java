@@ -6,9 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Ellipse2D;
-import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.*;
@@ -23,7 +20,7 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	ConcurrentHashMap<Point, Boolean> fig = new ConcurrentHashMap<Point, Boolean>();
 	static int size = 100;
 	int indexShape, distanceX, distanceY;
-	Point p, rememberP;	
+	Point rememberP;	
 	boolean dragged, rememberValue;
 
 	public Figures (){
@@ -51,7 +48,7 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D)g;
 			for (Point key : fig.keySet()) {
-				if(fig.get(key)==true){
+				if(fig.get(key)){
 					g2.setColor(Color.green);
 					g2.fillRect(key.x-(size/2), key.y-(size/2), size, size);
 				}else{
@@ -71,101 +68,109 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 		}
 	}
 
-		JPanel initButtons(){
-			JPanel panel = new JPanel();
+	JPanel initButtons(){
+		JPanel panel = new JPanel();
 
-			btnCircle = new JToggleButton("Kreise");
-			btnCircle.setSelected(true);
-			btnSquare = new JToggleButton("Rechtecke");
-			btngroup.add(btnSquare);
-			btngroup.add(btnCircle);
+		btnCircle = new JToggleButton("Kreise");
+		btnCircle.setSelected(true);
+		btnSquare = new JToggleButton("Rechtecke");
+		btngroup.add(btnSquare);
+		btngroup.add(btnCircle);
 
-			btnDelete = new JButton("Löschen");
-			btnDelete.addActionListener(new ActionListener() {
+		btnDelete = new JButton("Löschen");
+		btnDelete.addActionListener(new ActionListener() {
 
-				@Override
-				public void actionPerformed(ActionEvent e) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
-					String []option = {"Ja", "Nein"};
-					int close = JOptionPane.showOptionDialog(Figures.this, "Willst du wirklich alles löschen?",
-							"Wirklich löschen?", JOptionPane.YES_NO_OPTION,
-							JOptionPane.WARNING_MESSAGE, null,option, option[1]);
-					switch(close){
-					case JOptionPane.YES_OPTION:
-						Figures.this.fig.clear();
-						Figures.this.repaint();
-						break;
-					}
+				String []option = {"Ja", "Nein"};
+				int close = JOptionPane.showOptionDialog(Figures.this, "Willst du wirklich alles löschen?",
+						"Wirklich löschen?", JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE, null,option, option[1]);
+				switch(close){
+				case JOptionPane.YES_OPTION:
+					Figures.this.fig.clear();
+					Figures.this.repaint();
+					break;
 				}
-			});
-			panel.add(btnCircle);
-			panel.add(btnSquare);
-			panel.add(btnDelete);
+			}
+		});
+		panel.add(btnCircle);
+		panel.add(btnSquare);
+		panel.add(btnDelete);
 
-			return panel;
+		return panel;
 
-		}
+	}
 
-		@Override
-		public void mouseClicked(MouseEvent e) {
+	@Override
+	public void mouseClicked(MouseEvent e) {
 
-		}
+	}
 
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
 
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 
-		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-			p= e.getPoint();
-			for (Point key : fig.keySet()) {
-				if(new Rectangle(key.x, key.y,size, size).contains(p)){
-					dragged = true;
-					rememberP = (Point) key.clone();
-					rememberValue = (Boolean) fig.get(key);
-					distanceX = p.x - key.x;
-					distanceY = p.y - key.y;
-				}
-				
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		Point p= e.getPoint();
+		for (Point key : fig.keySet()) {
+			if(new Rectangle(key.x, key.y,size, size).contains(p)){
+				dragged = true;
+				rememberP = (Point) key.clone();
+				rememberValue = (Boolean) fig.get(key);
+				distanceX = p.x - key.x;
+				distanceY = p.y - key.y;
 			}
 		}
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			p = e.getPoint();
+		if (dragged){
+			for (Point key : fig.keySet()) {
+				if(key.equals(rememberP)){
+					fig.remove(key);
+				}
+			}
+		}else{
 			boolean rect;
-			//			if (dragged){
-			//				fig.get(indexShape).getBounds().setLocation(x-distanceX, y-distanceY);
-			//				dragged = false;
-			//			}else{
-			if(btnSquare.isSelected()){
+			if (btnSquare.isSelected()){
 				rect = true;
 			}else{
 				rect = false;
 			}
 			fig.put(p, rect);
+		}
+		repaint();
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if(dragged){
+			rememberP = e.getPoint();
+			fig.put(rememberP, rememberValue);
+			dragged = false;
+		}
+		repaint();
+	}
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+		if (dragged){
+			rememberP = e.getPoint();
 			repaint();
 		}
-		@Override
-		public void mouseDragged(MouseEvent e) {
-
-			if (dragged){
-				rememberP = e.getPoint();
-				repaint();
-			}
-		}
-		@Override
-		public void mouseMoved(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-
-		}
-		public static void main(String[] args) {
-			Figures f = new Figures();
-
-		}
 	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+	public static void main(String[] args) {
+		Figures f = new Figures();
+
+	}
+}
