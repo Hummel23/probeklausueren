@@ -20,12 +20,8 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	JButton btnDelete;
 	ButtonGroup btngroup = new ButtonGroup();
 	List<Shape> fig = Collections.synchronizedList(new ArrayList<>());
-	int size = 100, x, y, indexShape;
-	boolean inShape = false;
-	boolean rectangle, dragging = false;
-	Rectangle rec;
-	Ellipse2D.Double circ;
-
+	int size = 100, x, y;
+	
 	public Figures (){
 		super ("Kreise und Rechtecke");
 		contentPane = this.getContentPane();
@@ -57,15 +53,6 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 					g2.setColor(Color.blue);
 				}
 				g2.fill(shape);
-			}
-			if (dragging){
-				if(rectangle){
-					g2.setColor(Color.green);
-					g2.fill(rec);
-				}else{
-					g2.setColor(Color.BLUE);
-					g2.fill(circ);
-				}
 			}
 		}
 	}
@@ -124,71 +111,20 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	public void mousePressed(MouseEvent e) {
 		this.x = e.getX();
 		this.y = e.getY();
-		Point p = e.getPoint();
-
-		for (Shape shape : fig) {
-			if (shape.contains(p)){
-				dragging = true;
-				if(shape instanceof Rectangle){
-					rectangle=true;
-					rec = new Rectangle(p);
-				}else{
-					rectangle=false;
-					circ = new Ellipse2D.Double();
-				}
-				indexShape = fig.indexOf(shape);
-			}
-		}
-		if(dragging){
-			fig.remove(indexShape);
-		}
+	
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		int xnew = e.getX();
-		int ynew = e.getY();
-		Point p = e.getPoint();
-
-		if(!inShape){
-			if (btnSquare.isSelected()){
-				fig.add(new Rectangle(x, y, this.size, this.size));
-			}else{
-				fig.add(new Ellipse2D.Double(x, y, this.size, this.size));
-			}
-			repaint();
+		if(btnSquare.isSelected()){
+			fig.add(new Rectangle (x, y, this.size, this.size));
 		}else{
-			boolean overlap = false;
-			fig.remove(indexShape);
-			for (Shape shape : fig) {
-				if (shape.getBounds().equals(p)){
-					fig.remove(shape);
-					overlap = true;
-				}
-			}if (!overlap){
-				if(rectangle){
-					fig.add(new Rectangle (xnew, ynew, this.size, this.size));
-				}else{
-					fig.add(new Ellipse2D.Double(xnew, ynew, this.size, this.size));
-				}
-			}
-//			inShape = false;
-			dragging = false;
-			repaint();
+			fig.add(new Ellipse2D.Double(x, y, this.size, this.size));
 		}
-
+		repaint();
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		int xnew = e.getX();
-		int ynew = e.getY();
-		if(dragging){
-			if (rectangle){
-				rec.setLocation(xnew, ynew);	
-			}else{
-				circ.setFrame(xnew, ynew, this.size, this.size);
-			}
-		}
-		repaint();
+		
 	}
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
