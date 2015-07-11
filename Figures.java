@@ -23,8 +23,8 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	ConcurrentHashMap<Point, Boolean> fig = new ConcurrentHashMap<Point, Boolean>();
 	static int size = 100;
 	int indexShape, distanceX, distanceY;
-	Point p;
-	boolean dragged;
+	Point p, rememberP;	
+	boolean dragged, rememberValue;
 
 	public Figures (){
 		super ("Kreise und Rechtecke");
@@ -57,6 +57,15 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 				}else{
 					g2.setColor(Color.blue);
 					g2.fillOval(key.x-(size/2), key.y-(size/2), size, size);
+				}
+			}
+			if (dragged){
+				if(rememberValue){
+					g2.setColor(Color.green);
+					g2.fillRect(rememberP.x-(size/2), rememberP.y-(size/2), size, size);
+				}else{
+					g2.setColor(Color.blue);
+					g2.fillOval(rememberP.x-(size/2), rememberP.y-(size/2), size, size);
 				}
 			}
 		}
@@ -114,20 +123,17 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
-			p = e.getPoint();
-			//			for (Point key : keySet()) {
-			//				
-			//			}
-			//			for (Boolean boolean : fig) {
-			//				if (shape.contains(p)){
-			//					dragged = true;
-			//					indexShape = fig.indexOf(shape);
-			//					distanceX = x - shape.getBounds().x;
-			//					distanceY = y - shape.getBounds().y;
-			//
-			//				}
-			//			}
-
+			p= e.getPoint();
+			for (Point key : fig.keySet()) {
+				if(new Rectangle(key.x, key.y,size, size).contains(p)){
+					dragged = true;
+					rememberP = (Point) key.clone();
+					rememberValue = (Boolean) fig.get(key);
+					distanceX = p.x - key.x;
+					distanceY = p.y - key.y;
+				}
+				
+			}
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
@@ -149,7 +155,8 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 		public void mouseDragged(MouseEvent e) {
 
 			if (dragged){
-
+				rememberP = e.getPoint();
+				repaint();
 			}
 		}
 		@Override
