@@ -105,32 +105,7 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-//		Point p= e.getPoint();
-//		for (Point key : fig.keySet()) {
-//			if(new Rectangle(key.x, key.y,size, size).contains(p)){
-//				dragged = true;
-//				rememberP = (Point) key.clone();
-//				rememberValue = (Boolean) fig.get(key);
-//				distanceX = p.x - key.x;
-//				distanceY = p.y - key.y;
-//			}
-//		}
-//		if (dragged){
-//			for (Point key : fig.keySet()) {
-//				if(key.equals(rememberP)){
-//					fig.remove(key);
-//				}
-//			}
-//		}else{
-//			boolean rect;
-//			if (btnSquare.isSelected()){
-//				rect = true;
-//			}else{
-//				rect = false;
-//			}
-//			fig.put(p, rect);
-//		}
-//		repaint();
+
 	}
 
 	@Override
@@ -183,11 +158,11 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
-
-		if (dragged){
-			rememberP = e.getPoint();
-		}
-		repaint();
+//
+//		if (dragged){
+//			rememberP = e.getPoint();
+//		}
+//		repaint();
 	}
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
