@@ -20,8 +20,8 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	ConcurrentHashMap<Point, Boolean> fig = new ConcurrentHashMap<Point, Boolean>();
 	static int size = 100;
 	int indexShape, distanceX, distanceY;
-	Point rememberP;	
-	boolean dragged, rememberValue;
+	Point p, rememberP;	
+	boolean dragged = false, rememberValue;
 
 	public Figures (){
 		super ("Kreise und Rechtecke");
@@ -105,7 +105,32 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
+//		Point p= e.getPoint();
+//		for (Point key : fig.keySet()) {
+//			if(new Rectangle(key.x, key.y,size, size).contains(p)){
+//				dragged = true;
+//				rememberP = (Point) key.clone();
+//				rememberValue = (Boolean) fig.get(key);
+//				distanceX = p.x - key.x;
+//				distanceY = p.y - key.y;
+//			}
+//		}
+//		if (dragged){
+//			for (Point key : fig.keySet()) {
+//				if(key.equals(rememberP)){
+//					fig.remove(key);
+//				}
+//			}
+//		}else{
+//			boolean rect;
+//			if (btnSquare.isSelected()){
+//				rect = true;
+//			}else{
+//				rect = false;
+//			}
+//			fig.put(p, rect);
+//		}
+//		repaint();
 	}
 
 	@Override
@@ -120,12 +145,12 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Point p= e.getPoint();
+		p= e.getPoint();
 		for (Point key : fig.keySet()) {
 			if(new Rectangle(key.x, key.y,size, size).contains(p)){
 				dragged = true;
 				rememberP = (Point) key.clone();
-				rememberValue = (Boolean) fig.get(key);
+				rememberValue = fig.get(key);
 				distanceX = p.x - key.x;
 				distanceY = p.y - key.y;
 			}
@@ -136,6 +161,15 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 					fig.remove(key);
 				}
 			}
+		}
+		repaint();
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if(dragged){
+			rememberP = e.getPoint();
+			fig.put(rememberP, rememberValue);
+			dragged = false;
 		}else{
 			boolean rect;
 			if (btnSquare.isSelected()){
@@ -148,21 +182,12 @@ public class Figures extends JFrame implements MouseListener, MouseMotionListene
 		repaint();
 	}
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		if(dragged){
-			rememberP = e.getPoint();
-			fig.put(rememberP, rememberValue);
-			dragged = false;
-		}
-		repaint();
-	}
-	@Override
 	public void mouseDragged(MouseEvent e) {
 
 		if (dragged){
 			rememberP = e.getPoint();
-			repaint();
 		}
+		repaint();
 	}
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
